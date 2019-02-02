@@ -1,39 +1,24 @@
 package com.ftriantos.vantage.demo.main;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
         
 public class Tester {
 
@@ -112,6 +97,7 @@ public class Tester {
 	    intnumber = Integer.parseInt(line);
 	    
 	    System.out.println("selected ["+intnumber+"]: "+topics.get(intnumber).text());
+	    String myTopic = topics.get(intnumber).text();
 	    //the href link we are calling to get the reviews and it nees to show max number
 	    String linkToReviews = topics.get(intnumber).parent().attr("href");
 	    System.out.println(linkToReviews);
@@ -121,7 +107,7 @@ public class Tester {
 	    int currentSet = 25;
 	    
 	    Elements nothing = null;
-	    getRecords(cookies,currentSet,intTopRecord,linkToReviews,nothing,linkToReviews,0);
+	    getRecords(cookies,currentSet,intTopRecord,linkToReviews,nothing,linkToReviews,0,myTopic);
 	    
 	    /***
 	    
@@ -167,9 +153,9 @@ public class Tester {
     
   }
   
-  public static void getRecords(List<Cookie> cookies, int intTopRecord, int currentSet, String linkToReviews, Elements linkToReviewsSet, String origLink, int lastRecord) throws IOException {
+  public static void getRecords(List<Cookie> cookies, int intTopRecord, int currentSet, String linkToReviews, Elements linkToReviewsSet, String origLink, int lastRecord, String myTopic) throws IOException {
   	
-	File file = new File("./vanatageresults.txt");
+	File file = new File("./"+myTopic+"-vanatageresults.txt");
 	//Write Content
 	FileWriter writer = new FileWriter(file,true);
 	//Create the file
@@ -246,7 +232,7 @@ public class Tester {
 	
 	System.out.println(myNumReviews+" "+myNumReviews2);
 	intTopRecord = myNumReviews;
-	System.out.println("just displaying nm records "+myNumReviews);
+	System.out.println("number of records: "+myNumReviews);
 	//intTopRecord = currentSet - 1;//escape during testing
 	
 	
@@ -304,13 +290,14 @@ public class Tester {
 		currentSet+=25;
 		if(currentSet < intTopRecord && (intTopRecord-currentSet) > 25) {
 			System.out.println("current set = "+currentSet);
-			getRecords(cookies,intTopRecord,currentSet,submitPaginationLink,myPaginationList,originalLink,0);
+			getRecords(cookies,intTopRecord,currentSet,submitPaginationLink,myPaginationList,originalLink,0,myTopic);
 		}else if((intTopRecord - (currentSet-25)) > 0) {
 			System.out.println("current set last page = "+currentSet);
-			getRecords(cookies,intTopRecord,currentSet,submitPaginationLink,myPaginationList,originalLink,1);	
+			getRecords(cookies,intTopRecord,currentSet,submitPaginationLink,myPaginationList,originalLink,1,myTopic);	
 		}
 	}else{
-		System.out.println("YOUR FILE IS WRITTEN AND SAVED");
+		System.out.println("YOUR REVIEWS FOR "+myTopic+" ARE WRITTEN AND SAVED AT "+file.getPath());
+		
 	}
 		
   }
