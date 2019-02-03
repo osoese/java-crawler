@@ -246,6 +246,7 @@ public class Tester {
 		System.out.println("href "+"https://www.cochranelibrary.com"+myReviews.get(j).select("a").get(0).attr("href")+" | ");
 		writer.write("https://www.cochranelibrary.com"+myReviews.get(j).select("a").get(0).attr("href")+" | ");
 		//Should only be the title
+		//remove all non ascii characters
 		String reviewtext = myReviews.get(j).select("a").get(0).text().replaceAll("[^\\p{ASCII}]", "-").toString();
 		System.out.println("text "+reviewtext+" | ");
 		writer.write(reviewtext+" | ");
